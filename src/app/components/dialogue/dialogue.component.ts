@@ -3,16 +3,18 @@ import {FormBuilder} from '@angular/forms';
 import {formatDate} from '@angular/common';
 
 class Message {
-  text: string;
-  date: string;
-  user: User;
-
-
   constructor(text: string, user: User) {
     this.text = text;
     this.user = user;
     this.date = formatDate(Date.now(), 'hh:mm a | MMM d ', 'en-US', '+0300');
+    this.id = Message.idCounter++;
   }
+
+  static idCounter = 0;
+  text: string;
+  date: string;
+  user: User;
+  id: any;
 }
 
 class User {
@@ -35,14 +37,16 @@ export class DialogueComponent implements OnInit {
   messages = new Array<Message>();
   currentUser: User;
   messageForm: any;
+  isDeleteBtnDisplayed = false;
+  private messageToDelete: Message;
 
   constructor(private formBuilder: FormBuilder) {
     this.messageForm = formBuilder.group({
       message: ''
     });
     if (!localStorage.getItem('messages')) {
-      const messages = new Array<Message>();
-      localStorage.setItem('messages', JSON.stringify(messages));
+      this.messages = new Array<Message>();
+      localStorage.setItem('messages', JSON.stringify(this.messages));
     }
   }
 
@@ -50,7 +54,7 @@ export class DialogueComponent implements OnInit {
     if (this.name === 'Alica') {
       this.currentUser = new User(1, 'Alica');
     } else {
-      this.currentUser = new User(2, 'Jack');
+      this.currentUser = new User(2, 'Bob');
     }
   }
 
@@ -62,12 +66,24 @@ export class DialogueComponent implements OnInit {
   }
 
   processMessage(message: string): void {
-    const messages = JSON.parse(localStorage.getItem('messages'));
-    messages.push(new Message(message, this.currentUser));
-    localStorage.setItem('messages', JSON.stringify(messages));
+    this.messages = JSON.parse(localStorage.getItem('messages'));
+    this.messages.push(new Message(message, this.currentUser));
+    localStorage.setItem('messages', JSON.stringify(this.messages));
   }
 
   public getMsgs(): Array<Message> {
     return JSON.parse(localStorage.getItem('messages'));
+  }
+
+  showDelete(message: Message): void {
+    if (message.user.id === this.currentUser.id) {
+      this.isDeleteBtnDisplayed = true;
+      this.messageToDelete = message;
+    }
+  }
+
+  deleteMessage(): void {
+    this.messages = this.messages.filter(msg => msg.id !== this.messageToDelete.id);
+    localStorage.setItem('messages', JSON.stringify(this.messages));
   }
 }

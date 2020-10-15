@@ -6,7 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./chat-container.component.css']
 })
 export class ChatContainerComponent implements OnInit {
-  names = ['Alica', 'Jack'];
+  names = ['Alica', 'Bob'];
 
   constructor() { }
 

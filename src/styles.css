@@ -99,6 +99,17 @@
   width: 33px;
 }
 
+.msg_delete_btn {
+  background: none repeat scroll 0 0;
+  border: medium none;
+  color: #000;
+  cursor: pointer;
+  font-size: 17px;
+  height: 33px;
+  position: relative;
+  width: 33px;
+}
+
 .message {
   list-style-type: none;
 }
