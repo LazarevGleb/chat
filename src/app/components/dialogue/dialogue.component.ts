@@ -34,12 +34,16 @@ export class DialogueComponent implements OnInit {
   @Input() name: string;
   messages = new Array<Message>();
   currentUser: User;
-  messageForm;
+  messageForm: any;
 
   constructor(private formBuilder: FormBuilder) {
     this.messageForm = formBuilder.group({
       message: ''
     });
+    if (!localStorage.getItem('messages')) {
+      const messages = new Array<Message>();
+      localStorage.setItem('messages', JSON.stringify(messages));
+    }
   }
 
   ngOnInit(): void {
@@ -58,6 +62,12 @@ export class DialogueComponent implements OnInit {
   }
 
   processMessage(message: string): void {
-    this.messages.push(new Message(message, this.currentUser));
+    const messages = JSON.parse(localStorage.getItem('messages'));
+    messages.push(new Message(message, this.currentUser));
+    localStorage.setItem('messages', JSON.stringify(messages));
+  }
+
+  public getMsgs(): Array<Message> {
+    return JSON.parse(localStorage.getItem('messages'));
   }
 }

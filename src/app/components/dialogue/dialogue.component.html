@@ -5,7 +5,7 @@
     <div class="inbox_msg">
       <div class="mesgs">
         <div class="msg_history">
-          <li class="message" *ngFor="let message of messages">
+          <li class="message" *ngFor="let message of getMsgs()">
             <div *ngIf="message.user.id !== currentUser.id; then incoming_msg; else outgoing_msg;">
             </div>
             <ng-template #incoming_msg>
