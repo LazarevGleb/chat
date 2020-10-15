@@ -68,7 +68,7 @@
   color: #747474;
   display: block;
   font-size: 12px;
-  margin: 8px 0 0;
+  margin: 4px 0 12px;
 }
 
 .type_msg {
@@ -97,4 +97,8 @@
   right: 0;
   top: 11px;
   width: 33px;
+}
+
+.message {
+  list-style-type: none;
 }

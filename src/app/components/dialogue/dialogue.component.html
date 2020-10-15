@@ -5,22 +5,34 @@
     <div class="inbox_msg">
       <div class="mesgs">
         <div class="msg_history">
-          <div class="received_msg_block">
-            <div class="received_msg">
-              <p>Test which is a new approach to have all solutions</p>
-              <span class="time_date"> 11:01 AM | June 9</span></div>
-          </div>
-          <div class="sent_msg_block">
-            <div class="sent_msg">
-              <p>Test which is a new approach to have all solutions</p>
-              <span class="time_date"> 11:01 AM | June 9</span></div>
-          </div>
+          <li class="message" *ngFor="let message of messages">
+            <div *ngIf="message.user.id !== currentUser.id; then incoming_msg; else outgoing_msg;">
+            </div>
+            <ng-template #incoming_msg>
+              <div class="received_msg_block">
+                <div class="received_msg">
+                  <p>{{message.text}}</p>
+                  <span class="time_date">{{message.date}}</span>
+                </div>
+              </div>
+            </ng-template>
+            <ng-template #outgoing_msg>
+              <div class="sent_msg_block">
+                <div class="sent_msg">
+                  <p>{{message.text}}</p>
+                  <span class="time_date">{{message.date}}</span>
+                </div>
+              </div>
+            </ng-template>
+          </li>
         </div>
         <div class="type_msg">
-          <div class="input_msg_write">
-            <input type="text" class="write_msg" placeholder="Type a message"/>
-            <button class="msg_send_btn" type="button"></button>
-          </div>
+          <form [formGroup]="messageForm" class="input_msg_write" (ngSubmit)="onSubmit(messageForm.value)">
+            <input type="text" class="write_msg" placeholder="Type a message" formControlName="message"/>
+            <button class="msg_send_btn" type="submit">
+              <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
+            </button>
+          </form>
         </div>
       </div>
     </div>
