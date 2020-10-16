@@ -13,7 +13,7 @@
 }
 
 .mesgs {
-  padding: 30px 15px 0 25px;
+  padding: 10px 15px 0 25px;
 }
 
 .msg_history {
@@ -55,7 +55,7 @@
 }
 
 .sent_msg p {
-  background: #05728f none repeat scroll 0 0;
+  background: none repeat scroll 0 0;
   border-radius: 3px;
   font-size: 14px;
   margin: 0;
@@ -112,4 +112,12 @@
 
 .message {
   list-style-type: none;
+}
+
+.msg_parag {
+  background-color: #05728f !important;
+}
+
+.deleted_msg_parag {
+  background-color: #a83246 !important;
 }

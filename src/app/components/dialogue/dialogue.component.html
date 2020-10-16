@@ -3,7 +3,7 @@
 
   <div class="messaging">
     <div class="inbox_msg">
-      <div class="text-center" *ngIf="isDeleteBtnDisplayed">
+      <div class="text-center" [style.visibility]="isDeleteBtnDisplayed">
         <button class="msg_delete_btn" id="remove" type="button" (click)="deleteMessage()">
           <i class="fa fa-trash" aria-hidden="true"></i>
         </button>
@@ -16,7 +16,7 @@
             <ng-template #incoming_msg>
               <div class="received_msg_block">
                 <div class="received_msg">
-                  <p (click)="showDelete(message)">{{message.text}}</p>
+                  <p (click)="showDelete(message,msg)">{{message.text}}</p>
                   <span class="time_date">{{message.date}}</span>
                 </div>
               </div>
@@ -24,7 +24,8 @@
             <ng-template #outgoing_msg>
               <div class="sent_msg_block">
                 <div class="sent_msg">
-                  <p (click)="showDelete(message)">{{message.text}}</p>
+                  <p [class]="messageToDelete?.id === message.id ? 'deleted_msg_parag' : 'msg_parag'"
+                     (click)="showDelete(message)">{{message.text}}</p>
                   <span class="time_date">{{message.date}}</span>
                 </div>
               </div>
