@@ -13,5 +13,6 @@ export class Message {
   text: string;
   date: string;
   user: User;
-  id: any;
+  id: number;
+  deletedForId: number;
 }

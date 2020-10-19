@@ -56,7 +56,9 @@ export class DialogueComponent implements OnInit {
   }
 
   public getMsgs(): Array<Message> {
-    return JSON.parse(localStorage.getItem('messages'));
+    return JSON.parse(localStorage.getItem('messages')).filter(msg => {
+        return msg.deletedForId !== this.currentUser.id;
+      });
   }
 
   showDelete(message: Message): void { // TODO  FSM?
@@ -73,9 +75,29 @@ export class DialogueComponent implements OnInit {
     }
   }
 
-  deleteMessage(): void {
+  deleteMessage(): void { // TODO
+    if (window.confirm('Delete for everybody?')) {
+      this.deleteForAll();
+    } else {
+      this.deleteForAuthor();
+    }
+  }
+
+  private deleteForAll(): void {
     let messages = JSON.parse(localStorage.getItem('messages'));
     messages = messages.filter(msg => msg.id !== this.messageToDelete.id);
+    this.isDeleteBtnDisplayed = Visible.hidden;
+    localStorage.setItem('messages', JSON.stringify(messages));
+  }
+
+  private deleteForAuthor(): void {
+    const messages: Array<Message> = JSON.parse(localStorage.getItem('messages'));
+    const id = this.currentUser.id;
+    messages.forEach(msg => {
+      if (msg.id === this.messageToDelete.id) {
+        msg.deletedForId = id;
+      }
+    });
     this.isDeleteBtnDisplayed = Visible.hidden;
     localStorage.setItem('messages', JSON.stringify(messages));
   }
