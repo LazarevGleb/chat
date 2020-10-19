@@ -59,22 +59,17 @@ export class DialogueComponent implements OnInit {
     return JSON.parse(localStorage.getItem('messages'));
   }
 
-  showDelete(message: Message): void {
-    if (message.user.id === this.currentUser.id) {
-      if (this.messageToDelete?.id === message.id) {
-        this.toggleVisibility();
-      } else {
-        this.messageToDelete = message;
-      }
-    }
-  }
-
-  private toggleVisibility(): void {
+  showDelete(message: Message): void { // TODO  FSM?
     if (this.isDeleteBtnDisplayed === Visible.hidden) {
       this.isDeleteBtnDisplayed = Visible.visible;
-    } else {
+      this.messageToDelete = message;
+    } else if (this.isDeleteBtnDisplayed === Visible.visible &&
+      this.messageToDelete?.id === message.id) {
       this.isDeleteBtnDisplayed = Visible.hidden;
       this.messageToDelete = null;
+    } else if (this.isDeleteBtnDisplayed === Visible.visible &&
+      this.messageToDelete?.id !== message.id) {
+      this.messageToDelete = message;
     }
   }
 
