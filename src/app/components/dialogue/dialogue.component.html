@@ -3,14 +3,19 @@
 
   <div class="messaging">
     <div class="inbox_msg">
-      <div class="text-center" [style.visibility]="isDeleteBtnDisplayed">
-        <button class="msg_delete_btn" id="remove" type="button" (click)="deleteMessage()">
-          <i class="fa fa-trash" aria-hidden="true"></i>
-        </button>
+      <div [style.visibility]="deleteState.isDeleteBtnDisplayed">
+        <div class="row justify-content-center">
+          <button class="msg_delete_btn" id="remove" type="button" (click)="deleteMessage()">
+            <i class="fa fa-trash" aria-hidden="true"></i>
+          </button>
+          <section class="delete_checkbox">
+            <mat-checkbox [(ngModel)]="deleteForEveryone" (change)="toggleDeletion($event)">For everyone</mat-checkbox>
+          </section>
+        </div>
       </div>
       <div class="mesgs">
         <div class="msg_history">
-          <li class="message" *ngFor="let message of getMsgs()">
+          <li class="message" *ngFor="let message of getMessages()">
             <div *ngIf="message.user.id !== currentUser.id; then incoming_msg; else outgoing_msg;">
             </div>
             <ng-template #incoming_msg>
@@ -24,7 +29,7 @@
             <ng-template #outgoing_msg>
               <div class="sent_msg_block">
                 <div class="sent_msg">
-                  <p [class]="messageToDelete?.id === message.id ? 'deleted_msg_parag' : 'msg_parag'"
+                  <p [class]="deleteState.messageToDelete?.id === message.id ? 'deleted_msg_parag' : 'msg_parag'"
                      (click)="showDelete(message)">{{message.text}}</p>
                   <span class="time_date">{{message.date}}</span>
                 </div>

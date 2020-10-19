@@ -2,14 +2,9 @@ import {Component, Input, OnInit} from '@angular/core';
 import {FormBuilder} from '@angular/forms';
 import {User} from '../../data/User';
 import {Message} from '../../data/Message';
-
-enum Visible {
-  visible = 'visible',
-  hidden = 'hidden'
-}
-
-// TODO: 2.Delete message only by author; 3.Tests; 4.Fix bug with click before delete
-
+import {MessageService} from '../../services/message.service';
+import {DeleteFsm} from '../../services/DeleteFsm';
+import {DeleteState, SetNoMessageAndHidden, Visible} from '../../data/DeleteState';
 
 @Component({
   selector: 'app-dialogue',
@@ -20,18 +15,16 @@ export class DialogueComponent implements OnInit {
   @Input() name: string;
   currentUser: User;
   messageForm: any;
-  isDeleteBtnDisplayed = Visible.hidden;
-  messageToDelete: Message;
   isForDelete: boolean;
+  deleteForEveryone = false;
+  deleteState: DeleteState;
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(private formBuilder: FormBuilder, private messageService: MessageService) {
     this.messageForm = formBuilder.group({
       message: ''
     });
-    if (!localStorage.getItem('messages')) {
-      const messages = new Array<Message>();
-      localStorage.setItem('messages', JSON.stringify(messages));
-    }
+    this.deleteState = new SetNoMessageAndHidden();
+    this.messageService.initMessageStorage();
   }
 
   ngOnInit(): void {
@@ -42,63 +35,80 @@ export class DialogueComponent implements OnInit {
     }
   }
 
+  /**
+   * Action for button click to sent message
+   * @param messageObject message to sent
+   */
   onSubmit(messageObject): void {
     if (messageObject.message) {
       this.messageForm.reset();
-      this.processMessage(messageObject.message);
+      this.messageService.createAndSaveMessage(messageObject.message, this.currentUser);
     }
   }
 
-  processMessage(message: string): void {
-    const messages = JSON.parse(localStorage.getItem('messages'));
-    messages.push(new Message(message, this.currentUser));
-    localStorage.setItem('messages', JSON.stringify(messages));
+  /**
+   * Get messages from service except deleted for the user
+   */
+  public getMessages(): Array<Message> {
+    return this.messageService.getMessages().filter(msg => {
+      return msg.deletedForId !== this.currentUser.id;
+    });
   }
 
-  public getMsgs(): Array<Message> {
-    return JSON.parse(localStorage.getItem('messages')).filter(msg => {
-        return msg.deletedForId !== this.currentUser.id;
-      });
+  /**
+   * Define state for delete icons and message for removing
+   * @param message message to be deleted
+   */
+  showDelete(message: Message): void {
+    const deleteFsm = new DeleteFsm(this.deleteState, message);
+    this.deleteState = deleteFsm.getState();
   }
 
-  showDelete(message: Message): void { // TODO  FSM?
-    if (this.isDeleteBtnDisplayed === Visible.hidden) {
-      this.isDeleteBtnDisplayed = Visible.visible;
-      this.messageToDelete = message;
-    } else if (this.isDeleteBtnDisplayed === Visible.visible &&
-      this.messageToDelete?.id === message.id) {
-      this.isDeleteBtnDisplayed = Visible.hidden;
-      this.messageToDelete = null;
-    } else if (this.isDeleteBtnDisplayed === Visible.visible &&
-      this.messageToDelete?.id !== message.id) {
-      this.messageToDelete = message;
-    }
-  }
-
-  deleteMessage(): void { // TODO
-    if (window.confirm('Delete for everybody?')) {
-      this.deleteForAll();
+  /**
+   * Delete message with two strategies: for everyone and only for author according to checkbox
+   */
+  deleteMessage(): void {
+    let messages = this.messageService.getMessages();
+    if (this.deleteForEveryone) {
+      messages = this.preDeleteForAll(messages);
     } else {
-      this.deleteForAuthor();
+      messages = this.preDeleteForAuthor(messages);
     }
-  }
-
-  private deleteForAll(): void {
-    let messages = JSON.parse(localStorage.getItem('messages'));
-    messages = messages.filter(msg => msg.id !== this.messageToDelete.id);
-    this.isDeleteBtnDisplayed = Visible.hidden;
     localStorage.setItem('messages', JSON.stringify(messages));
+
+    this.deleteState.isDeleteBtnDisplayed = Visible.hidden;
   }
 
-  private deleteForAuthor(): void {
-    const messages: Array<Message> = JSON.parse(localStorage.getItem('messages'));
+  /**
+   * Filter messages to throw out candidate for deletion
+   * @param messages incoming messages to be filtered
+   */
+  private preDeleteForAll(messages: Array<Message>): Array<Message> {
+    this.deleteForEveryone = false;
+    return messages.filter(msg => msg.id !== this.deleteState.messageToDelete.id);
+
+  }
+
+  /**
+   * Find message to be deleted and mark it to not be shown for author
+   * @param messages incoming messages to be filtered
+   */
+  private preDeleteForAuthor(messages: Array<Message>): Array<Message> {
     const id = this.currentUser.id;
+
     messages.forEach(msg => {
-      if (msg.id === this.messageToDelete.id) {
+      if (msg.id === this.deleteState.messageToDelete.id) {
         msg.deletedForId = id;
       }
     });
-    this.isDeleteBtnDisplayed = Visible.hidden;
-    localStorage.setItem('messages', JSON.stringify(messages));
+    return messages;
+  }
+
+  /**
+   * Manage checkbox state
+   * @param e checkbox state
+   */
+  toggleDeletion(e): void {
+    this.deleteForEveryone = e.checked;
   }
 }

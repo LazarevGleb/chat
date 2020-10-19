@@ -1,6 +1,9 @@
 import {formatDate} from '@angular/common';
 import {User} from './User';
 
+/**
+ * Message object. Id grows up in consequentially. Date is formatted during object initialization
+ */
 export class Message {
   constructor(text: string, user: User) {
     this.text = text;

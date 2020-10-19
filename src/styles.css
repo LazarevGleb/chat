@@ -110,6 +110,17 @@
   width: 33px;
 }
 
+.delete_checkbox {
+  background: none repeat scroll 0 0;
+  border: medium none;
+  color: #000;
+  cursor: pointer;
+  font-size: 17px;
+  height: 33px;
+  position: relative;
+  padding-top: 4px;
+}
+
 .message {
   list-style-type: none;
 }
