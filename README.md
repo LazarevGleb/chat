@@ -12,3 +12,7 @@ Run `npm install` to install all dependencies.
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`.
+
+## See running app
+
+Go to `https://lazarevgleb.github.io/chat/`
