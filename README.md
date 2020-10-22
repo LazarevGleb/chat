@@ -1,4 +1,4 @@
-# Chat
+# Chat ![Build](https://github.com/LazarevGleb/chat/workflows/Build/badge.svg)
 Test task. Develop by Angular an emulator of messenger for conversation of 2 persons: Alica and Bob.
 There is an Alica's messenger on the left part of display. Bob's messenger is located in right one.
 The messenger consists of window with messages' history and input field. Messages of the sender are located
