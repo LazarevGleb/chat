@@ -1,6 +1,8 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { DialogueComponent } from './dialogue.component';
+import {DialogueComponent} from './dialogue.component';
+import {FormBuilder} from '@angular/forms';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 describe('DialogueComponent', () => {
   let component: DialogueComponent;
@@ -8,9 +10,11 @@ describe('DialogueComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DialogueComponent ]
+      imports: [MatCheckboxModule],
+      declarations: [DialogueComponent],
+      providers: [FormBuilder]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {
