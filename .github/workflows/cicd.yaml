@@ -57,3 +57,9 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: deploy_dist
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@releases/v3
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: deploy_dist/chat-demo
