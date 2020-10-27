@@ -6,6 +6,8 @@ import {ChatContainerComponent} from './components/chat-container/chat-container
 import {DialogueComponent} from './components/dialogue/dialogue.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatCheckboxModule} from '@angular/material/checkbox';
+import {WebsocketModule} from './websocket';
+import {environment} from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -17,7 +19,12 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
     BrowserModule,
     ReactiveFormsModule,
     MatCheckboxModule,
-    FormsModule
+    FormsModule,
+    WebsocketModule.config({
+      url: environment.ws,
+      reconnectAttempts: 3,
+      reconnectInterval: 3000
+    })
   ],
   providers: [],
   bootstrap: [AppComponent]
